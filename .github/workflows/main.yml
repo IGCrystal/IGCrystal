@@ -17,7 +17,7 @@ jobs:
     - name: Update countdown
       run: |
         # 设置目标日期 (请根据需要修改这个日期)
-        TARGET_DATE="2025-10-17"  # 示例：2025年10月17日
+        TARGET_DATE="2025-10-16"  # 示例：2025年10月16日
         
         # 计算剩余天数
         CURRENT_DATE=$(date +%Y-%m-%d)
