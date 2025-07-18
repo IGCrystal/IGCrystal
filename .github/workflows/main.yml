@@ -1,0 +1,54 @@
+name: Update README Countdown
+
+on:
+  schedule:
+    # 每天UTC时间00:00运行 (北京时间08:00)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  update-countdown:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Update countdown
+      run: |
+        # 设置目标日期 (请根据需要修改这个日期)
+        TARGET_DATE="2025-10-16"  # 示例：2025年10月16日
+        
+        # 计算剩余天数
+        CURRENT_DATE=$(date +%Y-%m-%d)
+        DAYS_LEFT=$(( ($(date -d "$TARGET_DATE" +%s) - $(date -d "$CURRENT_DATE" +%s)) / 86400 ))
+        
+        # 如果倒计时结束，设置为0
+        if [ $DAYS_LEFT -lt 0 ]; then
+          DAYS_LEFT=0
+        fi
+        
+        # 更新README文件
+        cat > README.md << EOF
+        ## Hi there 👋
+        正在完成账号合并。
+        预计还有${DAYS_LEFT}天。
+        EOF
+        
+        echo "剩余天数: $DAYS_LEFT"
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "cacheigcrystal@github.com"
+        git config --local user.name "IGCrystal-Ghost"
+        git add README.md
+        
+        # 检查是否有变化
+        if git diff --staged --quiet; then
+          echo "没有变化，跳过提交"
+        else
+          git commit -m "Update countdown: $(date '+%Y-%m-%d')"
+          git push
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
