@@ -39,7 +39,7 @@ jobs:
         
     - name: Commit and push changes
       run: |
-        git config --local user.email "cacheigcrystal@github.com"
+        git config --local user.email "cacheigcrystal@gmail.com"
         git config --local user.name "IGCrystal-Ghost"
         git add README.md
         
