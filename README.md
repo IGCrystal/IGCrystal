@@ -2,17 +2,11 @@
 
 The road is long, but the dream is still alive.
 
-> [!TIP]
->
-> 哎，从工地上回来就好了。这工地太折磨人了。
-
 <!-- GitHub Stats -->
 ![](https://github-readme-stats.vercel.app/api?username=IGCrystal&show_icons=true&theme=radical)
 
 <!-- Top Languages -->
 ![](https://github-readme-stats.vercel.app/api/top-langs/?username=IGCrystal&layout=compact&theme=nightowl)
-
-
 
 ```
 **%@@@@@@%%*++++++**+==--==#%%*=--------=*####+-----+#*++=====+##*====+=-----------------::::---==--:::::::::-==--=++===--=======++=---===----=-:---::::::--:..                                                                      ...     ....      ..         .:::::::::.                                                                      ...:---------------------::.                   ......:::::::::::::::::::::::::::..                                           ..                                  
