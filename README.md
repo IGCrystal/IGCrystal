@@ -1,4 +1,4 @@
-# IGCrystal-Ghost 👋
+# 别来无恙! 👋
 
 ## 📊 账号状态
 
@@ -22,16 +22,5 @@
 ![Progress](https://img.shields.io/badge/进度-69%25-blue)
 ![Days Left](https://img.shields.io/badge/剩余天数-89-orange)
 
----
-
-### 📝 说明
-
-> 此页面通过 GitHub Actions 自动更新，每天北京时间 08:00 更新一次。
-
-**最后更新**: 2025-07-19 23:42:40 CST
-
-### 🔗 链接
-
-- [GitHub Actions 工作流](.github/workflows/update-countdown.yml)
-- [提交历史](../../commits/main)
+**最后更新**: 2025-07-19 23:47:11 CST
 
