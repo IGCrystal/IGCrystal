@@ -122,7 +122,7 @@ jobs:
         
         # 生成README内容
         cat > README.md << EOF
-        # IGCrystal-Ghost 👋
+        # 别来无恙! 👋
 
         ## 📊 账号状态
         
@@ -146,18 +146,7 @@ jobs:
         ![Progress](https://img.shields.io/badge/进度-$PROGRESS%25-blue)
         ![Days Left](https://img.shields.io/badge/剩余天数-$DAYS_LEFT-orange)
         
-        ---
-        
-        ### 📝 说明
-        
-        > 此页面通过 GitHub Actions 自动更新，每天北京时间 08:00 更新一次。
-        
         **最后更新**: $(date '+%Y-%m-%d %H:%M:%S %Z')
-        
-        ### 🔗 链接
-        
-        - [GitHub Actions 工作流](.github/workflows/update-countdown.yml)
-        - [提交历史](../../commits/main)
         
         EOF
         
