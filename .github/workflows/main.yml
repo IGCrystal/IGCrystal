@@ -133,8 +133,6 @@ jobs:
         # 生成README内容
         cat > README.md << EOF
         # 别来无恙! 👋
-
-        ## 📊 账号状态
         
         **$CUSTOM_MESSAGE**
         
