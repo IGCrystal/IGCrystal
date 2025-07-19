@@ -55,21 +55,24 @@ jobs:
         CURRENT_TIMESTAMP=$(date -d "$CURRENT_DATE" +%s)
         DAYS_LEFT=$(( (TARGET_TIMESTAMP - CURRENT_TIMESTAMP) / 86400 ))
         
-        # 计算总天数（从开始日期到目标日期）
-        START_DATE="2025-01-01"  # 可以根据需要调整开始日期
-        TOTAL_DAYS=$(( (TARGET_TIMESTAMP - $(date -d "$START_DATE" +%s)) / 86400 ))
-        
         # 如果倒计时结束，设置为0
         if [ $DAYS_LEFT -lt 0 ]; then
           DAYS_LEFT=0
         fi
         
+        # 计算项目总天数（假设90天的项目周期）
+        TOTAL_PROJECT_DAYS=90
+        ELAPSED_DAYS=$(( TOTAL_PROJECT_DAYS - DAYS_LEFT ))
+        
         # 计算进度百分比
-        ELAPSED_DAYS=$(( TOTAL_DAYS - DAYS_LEFT ))
-        if [ $TOTAL_DAYS -gt 0 ]; then
-          PROGRESS=$(( ELAPSED_DAYS * 100 / TOTAL_DAYS ))
+        if [ $TOTAL_PROJECT_DAYS -gt 0 ] && [ $ELAPSED_DAYS -ge 0 ]; then
+          PROGRESS=$(( ELAPSED_DAYS * 100 / TOTAL_PROJECT_DAYS ))
+          # 确保进度不超过100%
+          if [ $PROGRESS -gt 100 ]; then
+            PROGRESS=100
+          fi
         else
-          PROGRESS=100
+          PROGRESS=0
         fi
         
         # 生成进度条
