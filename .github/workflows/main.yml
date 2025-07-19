@@ -108,17 +108,24 @@ jobs:
         # 生成状态标记
         if [ $DAYS_LEFT -eq 0 ]; then
           STATUS="🎉 已完成"
+          STATUS_TEXT="已完成"
           STATUS_COLOR="brightgreen"
         elif [ $DAYS_LEFT -le 7 ]; then
           STATUS="🔥 即将到期"
+          STATUS_TEXT="即将到期"
           STATUS_COLOR="red"
         elif [ $DAYS_LEFT -le 30 ]; then
           STATUS="⚡ 进行中"
+          STATUS_TEXT="进行中"
           STATUS_COLOR="orange"
         else
           STATUS="📅 计划中"
+          STATUS_TEXT="计划中"
           STATUS_COLOR="blue"
         fi
+        
+        # URL编码状态文本（处理中文字符）
+        STATUS_ENCODED=$(echo "$STATUS_TEXT" | sed 's/ /%20/g')
         
         # 生成README内容
         cat > README.md << EOF
@@ -142,7 +149,7 @@ jobs:
         [$PROGRESS_BAR] $PROGRESS%
         \`\`\`
         
-        ![Status](https://img.shields.io/badge/状态-$STATUS-$STATUS_COLOR)
+        ![Status](https://img.shields.io/badge/状态-$STATUS_ENCODED-$STATUS_COLOR)
         ![Progress](https://img.shields.io/badge/进度-$PROGRESS%25-blue)
         ![Days Left](https://img.shields.io/badge/剩余天数-$DAYS_LEFT-orange)
         
@@ -185,4 +192,3 @@ jobs:
         echo "✅ 成功提交并推送更改"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
