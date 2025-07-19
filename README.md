@@ -18,9 +18,9 @@
 [█████████████░░░░░░░] 69%
 ```
 
-![Status](https://img.shields.io/badge/状态-📅 计划中-blue)
+![Status](https://img.shields.io/badge/状态-计划中-blue)
 ![Progress](https://img.shields.io/badge/进度-69%25-blue)
 ![Days Left](https://img.shields.io/badge/剩余天数-89-orange)
 
-**最后更新**: 2025-07-19 23:47:11 CST
+**最后更新**: 2025-07-19 23:51:48 CST
 
