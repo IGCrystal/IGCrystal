@@ -1,10 +1,24 @@
 name: Update README Countdown
-
 on:
   schedule:
     # 每天UTC时间00:00运行 (北京时间08:00)
     - cron: '0 0 * * *'
   workflow_dispatch: # 允许手动触发
+    inputs:
+      target_date:
+        description: '目标日期 (YYYY-MM-DD)'
+        required: false
+        default: '2025-10-16'
+        type: string
+      custom_message:
+        description: '自定义消息'
+        required: false
+        default: '正在完成账号合并。'
+        type: string
+
+env:
+  DEFAULT_TARGET_DATE: "2025-10-16"
+  DEFAULT_MESSAGE: "正在完成账号合并。"
 
 jobs:
   update-countdown:
@@ -14,41 +28,172 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
-    - name: Update countdown
+    - name: Setup timezone
       run: |
-        # 设置目标日期 (请根据需要修改这个日期)
-        TARGET_DATE="2025-10-16"  # 示例：2025年10月16日
+        sudo timedatectl set-timezone Asia/Shanghai
+        echo "当前时间: $(date)"
+        
+    - name: Calculate countdown
+      id: countdown
+      run: |
+        # 获取目标日期和消息
+        TARGET_DATE="${{ github.event.inputs.target_date || env.DEFAULT_TARGET_DATE }}"
+        CUSTOM_MESSAGE="${{ github.event.inputs.custom_message || env.DEFAULT_MESSAGE }}"
+        
+        echo "目标日期: $TARGET_DATE"
+        echo "自定义消息: $CUSTOM_MESSAGE"
+        
+        # 验证日期格式
+        if ! date -d "$TARGET_DATE" >/dev/null 2>&1; then
+          echo "错误: 无效的日期格式 $TARGET_DATE"
+          exit 1
+        fi
         
         # 计算剩余天数
         CURRENT_DATE=$(date +%Y-%m-%d)
-        DAYS_LEFT=$(( ($(date -d "$TARGET_DATE" +%s) - $(date -d "$CURRENT_DATE" +%s)) / 86400 ))
+        TARGET_TIMESTAMP=$(date -d "$TARGET_DATE" +%s)
+        CURRENT_TIMESTAMP=$(date -d "$CURRENT_DATE" +%s)
+        DAYS_LEFT=$(( (TARGET_TIMESTAMP - CURRENT_TIMESTAMP) / 86400 ))
+        
+        # 计算总天数（从开始日期到目标日期）
+        START_DATE="2025-01-01"  # 可以根据需要调整开始日期
+        TOTAL_DAYS=$(( (TARGET_TIMESTAMP - $(date -d "$START_DATE" +%s)) / 86400 ))
         
         # 如果倒计时结束，设置为0
         if [ $DAYS_LEFT -lt 0 ]; then
           DAYS_LEFT=0
         fi
         
-        # 更新README文件
-        cat > README.md << EOF
-        ## Hi there 👋
-        正在完成账号合并。
-        预计还有${DAYS_LEFT}天。
-        EOF
+        # 计算进度百分比
+        ELAPSED_DAYS=$(( TOTAL_DAYS - DAYS_LEFT ))
+        if [ $TOTAL_DAYS -gt 0 ]; then
+          PROGRESS=$(( ELAPSED_DAYS * 100 / TOTAL_DAYS ))
+        else
+          PROGRESS=100
+        fi
+        
+        # 生成进度条
+        PROGRESS_BAR=""
+        FILLED_BLOCKS=$(( PROGRESS / 5 ))  # 每5%一个方块
+        EMPTY_BLOCKS=$(( 20 - FILLED_BLOCKS ))
+        
+        for i in $(seq 1 $FILLED_BLOCKS); do
+          PROGRESS_BAR="${PROGRESS_BAR}█"
+        done
+        for i in $(seq 1 $EMPTY_BLOCKS); do
+          PROGRESS_BAR="${PROGRESS_BAR}░"
+        done
+        
+        # 输出变量供后续步骤使用
+        echo "days_left=$DAYS_LEFT" >> $GITHUB_OUTPUT
+        echo "target_date=$TARGET_DATE" >> $GITHUB_OUTPUT
+        echo "custom_message=$CUSTOM_MESSAGE" >> $GITHUB_OUTPUT
+        echo "progress=$PROGRESS" >> $GITHUB_OUTPUT
+        echo "progress_bar=$PROGRESS_BAR" >> $GITHUB_OUTPUT
+        echo "current_date=$CURRENT_DATE" >> $GITHUB_OUTPUT
         
         echo "剩余天数: $DAYS_LEFT"
+        echo "进度: $PROGRESS%"
+        
+    - name: Generate README content
+      id: readme
+      run: |
+        DAYS_LEFT="${{ steps.countdown.outputs.days_left }}"
+        TARGET_DATE="${{ steps.countdown.outputs.target_date }}"
+        CUSTOM_MESSAGE="${{ steps.countdown.outputs.custom_message }}"
+        PROGRESS="${{ steps.countdown.outputs.progress }}"
+        PROGRESS_BAR="${{ steps.countdown.outputs.progress_bar }}"
+        CURRENT_DATE="${{ steps.countdown.outputs.current_date }}"
+        
+        # 生成状态标记
+        if [ $DAYS_LEFT -eq 0 ]; then
+          STATUS="🎉 已完成"
+          STATUS_COLOR="brightgreen"
+        elif [ $DAYS_LEFT -le 7 ]; then
+          STATUS="🔥 即将到期"
+          STATUS_COLOR="red"
+        elif [ $DAYS_LEFT -le 30 ]; then
+          STATUS="⚡ 进行中"
+          STATUS_COLOR="orange"
+        else
+          STATUS="📅 计划中"
+          STATUS_COLOR="blue"
+        fi
+        
+        # 生成README内容
+        cat > README.md << EOF
+        # IGCrystal-Ghost 👋
+
+        ## 📊 账号状态
+        
+        **$CUSTOM_MESSAGE**
+        
+        ### ⏰ 倒计时信息
+        
+        - 🎯 **目标日期**: $TARGET_DATE
+        - 📅 **当前日期**: $CURRENT_DATE  
+        - ⏳ **剩余天数**: **$DAYS_LEFT** 天
+        - 📈 **完成进度**: $PROGRESS%
+        - 🏷️ **状态**: $STATUS
+        
+        ### 📊 进度可视化
+        
+        \`\`\`
+        [$PROGRESS_BAR] $PROGRESS%
+        \`\`\`
+        
+        ![Status](https://img.shields.io/badge/状态-$STATUS-$STATUS_COLOR)
+        ![Progress](https://img.shields.io/badge/进度-$PROGRESS%25-blue)
+        ![Days Left](https://img.shields.io/badge/剩余天数-$DAYS_LEFT-orange)
+        
+        ---
+        
+        ### 📝 说明
+        
+        > 此页面通过 GitHub Actions 自动更新，每天北京时间 08:00 更新一次。
+        
+        **最后更新**: $(date '+%Y-%m-%d %H:%M:%S %Z')
+        
+        ### 🔗 链接
+        
+        - [GitHub Actions 工作流](.github/workflows/update-countdown.yml)
+        - [提交历史](../../commits/main)
+        
+        EOF
+        
+        echo "README 内容已生成"
+        
+    - name: Check for changes
+      id: changes
+      run: |
+        if git diff --quiet README.md; then
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+          echo "没有检测到变化"
+        else
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+          echo "检测到 README 变化"
+          git diff README.md
+        fi
         
     - name: Commit and push changes
+      if: steps.changes.outputs.has_changes == 'true'
       run: |
+        # 配置 Git
         git config --local user.email "cacheigcrystal@gmail.com"
         git config --local user.name "IGCrystal-Ghost"
+        
+        # 添加文件
         git add README.md
         
-        # 检查是否有变化
-        if git diff --staged --quiet; then
-          echo "没有变化，跳过提交"
-        else
-          git commit -m "Update countdown: $(date '+%Y-%m-%d')"
-          git push
-        fi
+        # 创建提交消息
+        DAYS_LEFT="${{ steps.countdown.outputs.days_left }}"
+        COMMIT_MESSAGE="🤖 Auto-update: 还剩 $DAYS_LEFT 天 ($(date '+%Y-%m-%d %H:%M'))"
+        
+        # 提交和推送
+        git commit -m "$COMMIT_MESSAGE"
+        git push
+        
+        echo "✅ 成功提交并推送更改"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
