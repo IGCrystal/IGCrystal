@@ -13,12 +13,12 @@ on:
       custom_message:
         description: '自定义消息'
         required: false
-        default: '正在完成账号合并。'
+        default: '想要变得更强！'
         type: string
 
 env:
   DEFAULT_TARGET_DATE: "2025-10-16"
-  DEFAULT_MESSAGE: "正在完成账号合并。"
+  DEFAULT_MESSAGE: "想要变得更强！"
 
 jobs:
   update-countdown:
@@ -132,19 +132,19 @@ jobs:
         
         # 生成README内容
         cat > README.md << EOF
-        # 别来无恙! 👋
+        # 我真的可以变强吗？
         
         **$CUSTOM_MESSAGE**
         
-        ### ⏰ 倒计时信息
+        ### ⏰ 恍恍惚惚
         
-        - 🎯 **目标日期**: $TARGET_DATE
-        - 📅 **当前日期**: $CURRENT_DATE  
-        - ⏳ **剩余天数**: **$DAYS_LEFT** 天
-        - 📈 **完成进度**: $PROGRESS%
+        - 🎯 **期望**: $TARGET_DATE
+        - 📅 **当下**: $CURRENT_DATE  
+        - ⏳ **余额**: **$DAYS_LEFT** 天
+        - 📈 **进度**: $PROGRESS%
         - 🏷️ **状态**: $STATUS
         
-        ### 📊 进度可视化
+        ### 📊 洞察一切
         
         \`\`\`
         [$PROGRESS_BAR] $PROGRESS%
