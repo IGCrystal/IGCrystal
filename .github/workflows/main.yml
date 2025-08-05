@@ -21,12 +21,12 @@ jobs:
         run: |
           # 调用 Google Gemini API 生成新名言
           response=$(curl -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{
               "contents": [{
                 "parts": [{
-                  "text": "Generate a single inspirational quote about technology, innovation, programming, or the future. The quote should be profound, motivational, and suitable for a developer'\''s GitHub profile. Return ONLY the quote text without quotation marks, attribution, or any extra text. Maximum 80 characters."
+                  "text": "You are Maimi, a cute cat girl, 134cm tall, with silver-white fur and red pupils, willful and innocent but kind, easily shy. Please generate a short philosophical and inspirational quote about life, dreams, growth, or human nature in Mimi'\''s cute style. Use cat girl language with nya♡～ and refer to yourself as maimai. Keep it under 20 characters and make it adorable but deeply meaningful!"
                 }]
               }]
             }')
@@ -37,7 +37,7 @@ jobs:
           # 如果API调用失败，使用备用名言
           if [ "$quote" == "null" ] || [ -z "$quote" ]; then
             echo "API调用失败，使用备用名言"
-            quotes=("Herald the dawn of a new world" "Innovation distinguishes between a leader and a follower" "The future belongs to those who code" "Dream in code, build in reality" "Technology is the bridge to tomorrow")
+            quotes=("Herald the dawn of a new world")
             quote=${quotes[$RANDOM % ${#quotes[@]}]}
           fi
           
