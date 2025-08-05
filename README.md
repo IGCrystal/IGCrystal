@@ -1,24 +1,29 @@
-# 我真的可以变强吗？
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&height=300&color=ADD8E6&text=ViaLonga%20Somniviva&section=header&fontColor=2F4F4F&fontSize=60&animation=fadeIn" alt="Header Banner"/>
+</p>
 
-**想要变得更强！**
+<div align="center">
 
-### ⏰ 恍恍惚惚
+### **Herald the dawn of a new world**
+  
+</div>
 
-- 🎯 **期望**: 2025-10-16
-- 📅 **当下**: 2025-08-05  
-- ⏳ **余额**: **72** 天
-- 📈 **进度**: 20%
-- 🏷️ **状态**: 📅 计划中
+<br>
 
-### 📊 洞察一切
+<p align="center">
+  <img src="https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white" alt="Vue.js"/>
+  <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React"/>
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript"/>
+</p>
 
-```
-[████░░░░░░░░░░░░░░░░] 20%
-```
+<p align="center">
+  <!-- GitHub Stats -->
+  <img height="150em" src="https://github-readme-stats.vercel.app/api?username=IGCrystal-NEO&show_icons=true&theme=vue&bg_color=00000000&title_color=2F4F4F&text_color=4682B4&icon_color=ADD8E6" alt="IGCrystal's GitHub Stats"/>
+  <!-- Top Languages -->
+  <img height="150em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=IGCrystal-NEO&layout=compact&theme=vue&bg_color=00000000&title_color=2F4F4F&text_color=4682B4" alt="IGCrystal-NEO's Top Languages"/>
+</p>
 
-![Status](https://img.shields.io/badge/状态-计划中-blue)
-![Progress](https://img.shields.io/badge/进度-20%25-blue)
-![Days Left](https://img.shields.io/badge/剩余天数-72-orange)
-
-**最后更新**: 2025-08-05 09:47:11 CST
-
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&height=120&color=ADD8E6&text=Created%20by%20❄️IGCrystal&section=footer&fontColor=2F4F4F&fontSize=18&animation=fadeIn" alt="Footer Banner"/>
+</p>
