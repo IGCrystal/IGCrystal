@@ -46,21 +46,26 @@ jobs:
 
       - name: Update README
         run: |
-          # 使用sed替换README中的名言
-          sed -i 's/### \*\*.*\*\*/### **${{ steps.generate_quote.outputs.QUOTE }}**/' README.md
+          # 使用sed替换README中的名言 - 修复正则表达式
+          quote="${{ steps.generate_quote.outputs.QUOTE }}"
+          sed -i "s/### \*\*.*\*\*/### **${quote}**/" README.md
           
-          # 检查是否有变化
-          if git diff --quiet README.md; then
-            echo "没有检测到变化"
-            exit 0
-          fi
+          # 显示变化
+          echo "=== README.md 变化 ==="
+          git diff README.md || echo "没有变化"
 
       - name: Commit and push changes
         run: |
-          git config --local user.name "IGCrystal-G"
-          git config --local user.email "cacheigcrystal@gmail.com"
-          git add README.md
-          git commit -m "✨ Update daily quote: ${{ steps.generate_quote.outputs.QUOTE }}"
-          git push
+          # 检查是否有变化需要提交
+          if git diff --quiet README.md; then
+            echo "没有检测到变化，跳过提交"
+          else
+            git config --local user.name "IGCrystal-G"
+            git config --local user.email "cacheigcrystal@gmail.com"
+            git add README.md
+            git commit -m "✨ Update daily quote: ${{ steps.generate_quote.outputs.QUOTE }}"
+            git push
+            echo "成功更新名言: ${{ steps.generate_quote.outputs.QUOTE }}"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
