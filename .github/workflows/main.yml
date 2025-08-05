@@ -44,19 +44,6 @@ jobs:
         
         echo "✅ README.md updated successfully"
     
-    - name: Check for changes
-      id: verify-changed-files
-      run: |
-        # 检查是否有文件被修改（排除备份文件）
-        git add README.md
-        if git diff --staged --quiet; then
-          echo "changed=false" >> $GITHUB_OUTPUT
-          echo "📝 No changes detected in README.md"
-        else
-          echo "changed=true" >> $GITHUB_OUTPUT
-          echo "✨ Changes detected in README.md"
-        fi
-    
     - name: Commit and push changes
       if: steps.verify-changed-files.outputs.changed == 'true'
       run: |
