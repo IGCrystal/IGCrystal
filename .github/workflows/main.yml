@@ -30,21 +30,31 @@ jobs:
         # 获取当前时间戳，强制刷新GitHub统计API缓存
         TIMESTAMP=$(date +%s)
         
-        # 备份原始README
-        cp README.md README.backup.md
+        echo "🔄 Updating README with timestamp: $TIMESTAMP"
         
-        # 使用sed替换GitHub统计链接，添加时间戳参数来刷新缓存
-        sed -i "s|github-readme-stats\.vercel\.app/api?username=Larch-C&show_icons=true&theme=vue&bg_color=00000000&title_color=2F4F4F&text_color=4682B4&icon_color=ADD8E6|github-readme-stats.vercel.app/api?username=Larch-C\&show_icons=true\&theme=vue\&bg_color=00000000\&title_color=2F4F4F\&text_color=4682B4\&icon_color=ADD8E6\&t=${TIMESTAMP}|g" README.md
+        # 检查README.md是否存在现有的时间戳参数并替换，或者添加新的
+        if grep -q "&t=" README.md; then
+          # 如果已存在时间戳参数，则替换它
+          sed -i "s/&t=[0-9]*//g" README.md
+        fi
         
-        sed -i "s|github-readme-stats\.vercel\.app/api/top-langs/?username=Larch-C&layout=compact&theme=vue&bg_color=00000000&title_color=2F4F4F&text_color=4682B4|github-readme-stats.vercel.app/api/top-langs/?username=Larch-C\&layout=compact\&theme=vue\&bg_color=00000000\&title_color=2F4F4F\&text_color=4682B4\&t=${TIMESTAMP}|g" README.md
+        # 为GitHub统计链接添加时间戳参数
+        sed -i "s|github-readme-stats\.vercel\.app/api?username=Larch-C\([^\"]*\)\"|github-readme-stats.vercel.app/api?username=Larch-C\1\&t=${TIMESTAMP}\"|g" README.md
+        sed -i "s|github-readme-stats\.vercel\.app/api/top-langs/?username=Larch-C\([^\"]*\)\"|github-readme-stats.vercel.app/api/top-langs/?username=Larch-C\1\&t=${TIMESTAMP}\"|g" README.md
+        
+        echo "✅ README.md updated successfully"
     
     - name: Check for changes
       id: verify-changed-files
       run: |
-        if [ -n "$(git status --porcelain)" ]; then
-          echo "changed=true" >> $GITHUB_OUTPUT
-        else
+        # 检查是否有文件被修改（排除备份文件）
+        git add README.md
+        if git diff --staged --quiet; then
           echo "changed=false" >> $GITHUB_OUTPUT
+          echo "📝 No changes detected in README.md"
+        else
+          echo "changed=true" >> $GITHUB_OUTPUT
+          echo "✨ Changes detected in README.md"
         fi
     
     - name: Commit and push changes
@@ -52,18 +62,16 @@ jobs:
       run: |
         git config --local user.email "cacheigcrystal@gmail.com"
         git config --local user.name "IGCrystal-G"
-        git add README.md
         git commit -m "🤖 Auto-update GitHub stats - $(date +'%Y-%m-%d %H:%M:%S UTC')"
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Clean up
+    - name: Clean up untracked files
       if: always()
       run: |
-        if [ -f README.backup.md ]; then
-          rm README.backup.md
-        fi
+        # 清理任何可能产生的备份文件
+        git clean -f
 
   # 可选：添加一个job来验证README格式
   validate-readme:
