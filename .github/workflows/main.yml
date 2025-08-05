@@ -59,15 +59,10 @@ jobs:
         git config --local user.name "IGCrystal"
         git add README.md
         
-        # 检查是否有变更需要提交
-        if git diff --staged --quiet; then
-          echo "ℹ️ No changes detected - README is already up to date"
-        else
-          echo "✨ Changes detected, committing and pushing..."
-          git commit -m "🤖 Auto-update GitHub stats - $(date +'%Y-%m-%d %H:%M:%S UTC')"
-          git push
-          echo "✅ README updated and pushed successfully!"
-        fi
+        echo "✨ Committing and pushing changes..."
+        git commit -m "🤖 Auto-update GitHub stats - $(date +'%Y-%m-%d %H:%M:%S UTC')" || echo "Nothing to commit"
+        git push
+        echo "✅ README updated and pushed successfully!"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
