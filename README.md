@@ -4,7 +4,7 @@
 
 <div align="center">
 
-### **Herald the dawn of a new world**
+### **Nyaa♡～ Maimai believes: Grow purr-fectly, nya! ✨**
   
 </div>
 
