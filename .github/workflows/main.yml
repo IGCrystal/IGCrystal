@@ -43,14 +43,26 @@ jobs:
         sed -i "s|github-readme-stats\.vercel\.app/api/top-langs/?username=Larch-C\([^\"]*\)\"|github-readme-stats.vercel.app/api/top-langs/?username=Larch-C\1\&t=${TIMESTAMP}\"|g" README.md
         
         echo "✅ README.md updated successfully"
+        
+        # 显示修改后的内容（调试用）
+        echo "📝 Modified URLs in README.md:"
+        grep "github-readme-stats" README.md || echo "No github-readme-stats URLs found"
     
     - name: Commit and push changes
-      if: steps.verify-changed-files.outputs.changed == 'true'
       run: |
         git config --local user.email "cacheigcrystal@gmail.com"
-        git config --local user.name "IGCrystal-G"
-        git commit -m "🤖 Auto-update GitHub stats - $(date +'%Y-%m-%d %H:%M:%S UTC')"
-        git push
+        git config --local user.name "IGCrystal"
+        git add README.md
+        
+        # 检查是否有变更需要提交
+        if git diff --staged --quiet; then
+          echo "ℹ️ No changes detected - README is already up to date"
+        else
+          echo "✨ Changes detected, committing and pushing..."
+          git commit -m "🤖 Auto-update GitHub stats - $(date +'%Y-%m-%d %H:%M:%S UTC')"
+          git push
+          echo "✅ README updated and pushed successfully!"
+        fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
