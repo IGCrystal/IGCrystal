@@ -32,21 +32,26 @@ jobs:
         
         echo "🔄 Updating README with timestamp: $TIMESTAMP"
         
+        # 显示当前README中的github-readme-stats链接
+        echo "📋 Current github-readme-stats URLs:"
+        grep "github-readme-stats" README.md || echo "No github-readme-stats URLs found"
+        
         # 检查README.md是否存在现有的时间戳参数并替换，或者添加新的
         if grep -q "&t=" README.md; then
           # 如果已存在时间戳参数，则替换它
           sed -i "s/&t=[0-9]*//g" README.md
         fi
         
-        # 为GitHub统计链接添加时间戳参数
-        sed -i "s|github-readme-stats\.vercel\.app/api?username=Larch-C\([^\"]*\)\"|github-readme-stats.vercel.app/api?username=Larch-C\1\&t=${TIMESTAMP}\"|g" README.md
-        sed -i "s|github-readme-stats\.vercel\.app/api/top-langs/?username=Larch-C\([^\"]*\)\"|github-readme-stats.vercel.app/api/top-langs/?username=Larch-C\1\&t=${TIMESTAMP}\"|g" README.md
+        # 为GitHub统计链接添加时间戳参数 - 使用更通用的匹配模式
+        # 匹配任何用户名的github-readme-stats链接
+        sed -i "s|github-readme-stats\.vercel\.app/api?username=\([^&\"]*\)\([^\"]*\)\"|github-readme-stats.vercel.app/api?username=\1\2\&t=${TIMESTAMP}\"|g" README.md
+        sed -i "s|github-readme-stats\.vercel\.app/api/top-langs/?username=\([^&\"]*\)\([^\"]*\)\"|github-readme-stats.vercel.app/api/top-langs/?username=\1\2\&t=${TIMESTAMP}\"|g" README.md
         
         echo "✅ README.md updated successfully"
         
         # 显示修改后的内容（调试用）
         echo "📝 Modified URLs in README.md:"
-        grep "github-readme-stats" README.md || echo "No github-readme-stats URLs found"
+        grep "github-readme-stats" README.md || echo "Still no github-readme-stats URLs found"
     
     - name: Commit and push changes
       run: |
