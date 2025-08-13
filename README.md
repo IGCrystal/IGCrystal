@@ -26,9 +26,9 @@
 
 <p align="center">
   <!-- GitHub Stats -->
-  <img height="150em" src="https://github-readme-stats.vercel.app/api?username=Larch-C&show_icons=true&theme=vue&bg_color=00000000&title_color=2F4F4F&text_color=4682B4&icon_color=ADD8E6" alt="Larch-C's GitHub Stats"/>
+  <img height="150em" src="https://card-navy-nu.vercel.app/api?username=Larch-C&show_icons=true&theme=vue&bg_color=00000000&title_color=2F4F4F&text_color=4682B4&icon_color=ADD8E6" alt="Larch-C's GitHub Stats"/>
   <!-- Top Languages -->
-  <img height="150em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Larch-C&layout=compact&theme=vue&bg_color=00000000&title_color=2F4F4F&text_color=4682B4" alt="Larch-C's Top Languages"/>
+  <img height="150em" src="https://card-navy-nu.vercel.app/api/top-langs/?username=Larch-C&layout=compact&theme=vue&bg_color=00000000&title_color=2F4F4F&text_color=4682B4" alt="Larch-C's Top Languages"/>
 </p>
 
 <p align="center">
