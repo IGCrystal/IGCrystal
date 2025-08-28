@@ -4,7 +4,7 @@
 
 <div align="center">
 
-### **Maimai believes: Grow slow, nya♡! Bloom bright, maimai! ✨**
+### **Maimai believes! Nya♡~ Grow big, dream bright! ✨**
   
 </div>
 
