@@ -4,7 +4,7 @@
 
 <div align="center">
 
-### **Maimai believes! Dream big, grow strong, nya♡～!**
+### **Maimai believes in you, nya♡! Dream big, grow strong, nya♡!**
   
 </div>
 
