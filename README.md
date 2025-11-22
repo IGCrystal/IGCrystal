@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/IGCyukira/IGCyukira/refs/heads/main/img/IGCrystal_NOBG_Edit.webp" width = "305" height = "411" alt="IGCyukira" align=right />
+<img src="https://raw.githubusercontent.com/IGCyukira/IGCyukira/refs/heads/main/img/IGCrystal-o-webp.webp" width = "300" height = "300" alt="IGCyukira" align=right />
 <div align="center">
 
 # The husk of [IGCyukira](https://github.com/IGCyukira)
