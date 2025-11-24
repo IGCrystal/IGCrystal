@@ -1,6 +1,6 @@
-<div align="center">
+<img src="https://raw.githubusercontent.com/IGCyukira/IGCyukira/refs/heads/main/img/IGCrystal_Edit_EyE_2_nobg.webp" width = "300" height = "300" alt="IGCrystal" align="right" />
 
-<img src="https://raw.githubusercontent.com/IGCyukira/IGCyukira/refs/heads/main/img/IGCrystal-o-webp.webp" width = "300" height = "300" alt="IGCyukira" align=center />
+<div align="center">
 
 # The husk of [IGCyukira](https://github.com/IGCyukira)
 
