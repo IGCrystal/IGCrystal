@@ -39,3 +39,20 @@ _ViaLonga, Somniviva._
 遺構に響き渡る清らかな鐘の音が、永い夢を打ち砕いた。
 
 彼女はゆっくりと瞳を開いた。その空色（そらいろ）の瞳には、夢の余温がまだ残っている。彼女はただ、目の前に広がるこの純粋で、美しい世界を、じっと見つめていた。
+
+
+#
+
+<div align="center">
+
+### Follower Count Rule
+
+> 我比较喜欢某些数字，所以本账号的粉丝数遵循以下集合 $S$ 的数学规律：
+
+_I just happen to like certain numbers, so my follower count follows the mathematical logic of set_ $S$ _below:_
+
+</div>
+
+$$
+S = \lbrace x \in \mathbb{N} \mid (x < 10 \land x \notin \lbrace 3, 7, 9 \rbrace) \lor (x \ge 10 \land ((2 \mid x) \lor (5 \mid x) \lor (x \bmod 10 = 7))) \rbrace
+$$
