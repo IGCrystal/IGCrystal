@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="120" height="120">
+  <defs>
+    <style>
+      .bg-morph {
+        transform-origin: 50px 50px;
+        animation: 
+          spin 6s linear infinite,
+          colorShift 4s ease-in-out infinite alternate;
+        /* 核心魔法：用粗大的圆角描边包裹多边形，实现完美的丝滑圆角边缘！喵！ */
+        stroke-width: 8px;
+        stroke-linejoin: round;
+      }
+      .star-icon {
+        fill: #ffffff;
+        transform-origin: 50px 50px;
+        /* 🌟 麦咪把这里的呼吸和旋转动画拿掉啦！让它安安静静喵！ 🌟 */
+        /* animation: starPulse 2s ease-in-out infinite alternate; */
+      }
+      
+      /* 缓慢而优雅的全局旋转 */
+      @keyframes spin { 
+        100% { transform: rotate(360deg); } 
+      }
+      /* 完美还原视频里的：蓝色(六边形) -> 紫色(波浪徽章) */
+      @keyframes colorShift {
+        0%, 15% { fill: #4285f4; stroke: #4285f4; }
+        85%, 100% { fill: #b07cff; stroke: #b07cff; }
+      }
+      /* 🌟 虽然麦咪把动画删了，但这里保留定义防止报错喵！ 🌟 */
+      @keyframes starPulse {
+        0%   { transform: scale(0.95) rotate(0deg); }
+        100% { transform: scale(1.1) rotate(10deg); }
+      }
+    </style>
+  </defs>
+
+  <polygon class="bg-morph" points="50,20 63,27.5 76,35 76,50 76,65 63,72.5 50,80 37,72.5 24,65 24,50 24,35 37,27.5">
+    
+    <animate 
+      attributeName="points" 
+      dur="4s" 
+      repeatCount="indefinite"
+      values="
+        50,20 63,27.5 76,35 76,50 76,65 63,72.5 50,80 37,72.5 24,65 24,50 24,35 37,27.5;
+        
+        50,22 64,25.8 74.2,36 78,50 74.2,64 64,74.2 50,78 36,74.2 25.8,64 22,50 25.8,36 36,25.8;
+
+        50,16 61,31 79.4,33 72,50 79.4,67 61,69 50,84 39,69 20.6,67 28,50 20.6,33 39,31;
+        
+        50,22 64,25.8 74.2,36 78,50 74.2,64 64,74.2 50,78 36,74.2 25.8,64 22,50 25.8,36 36,25.8;
+
+        50,20 63,27.5 76,35 76,50 76,65 63,72.5 50,80 37,72.5 24,65 24,50 24,35 37,27.5
+      " 
+    />
+  </polygon>
+
+  <svg x="34" y="34" width="32" height="32" viewBox="0 -960 960 960" overflow="visible">
+    <path class="star-icon" d="M480-80q-6,0-11-4t-7-10q-17-67-51-126T328-328T220-411T94-462q-6-2-10-7t-4-11t4-11t10-7q67-17 126-51t108-83t83-108t51-126q2-6 7-10t11-4t10.5,4t6.5,10q18,67 52,126t83,108t108,83t126,51q6,2 10,7t4,11t-4,11t-10,7q-67,17-126,51T632-328T549-220T498-94q-2,6-7,10t-11,4Z"></path>
+  </svg>
+</svg>
