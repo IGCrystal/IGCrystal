@@ -1,0 +1,216 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200" id="myBtn" style="cursor: pointer; font-family: sans-serif;">
+  <defs>
+    <style>
+      /* 麦咪的 SVG 专属魔法样式喵 - 已去除黑色背景喵！ */
+      .magic-rotator {
+        opacity: 0;
+        transition: opacity 0.4s cubic-bezier(0.2, 0, 0, 1);
+      }
+      .magic-shape {
+        stroke: rgba(255, 255, 255, 0.18);
+        stroke-width: 1.2;
+        stroke-linejoin: round;
+        stroke-linecap: round;
+        vector-effect: non-scaling-stroke;
+      }
+      .star-icon {
+        fill: #e8eaed;
+        transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+        transform-origin: 50px 50px;
+      }
+      /* 当鼠标放上去时，触发 JS 挂载的 .is-active 类喵！ */
+      #myBtn.is-active .magic-rotator {
+        opacity: 1;
+      }
+      #myBtn.is-active .star-icon {
+        fill: #ffffff;
+        transform: rotate(180deg) scale(1.1);
+      }
+    </style>
+  </defs>
+
+  <g class="magic-rotator" id="rotator" transform-origin="50 50">
+    <path class="magic-shape" id="magicShape" d="" fill="#4285f4"></path>
+  </g>
+
+  <svg class="star-icon" id="starIcon" x="34" y="34" width="32" height="32" viewBox="0 -960 960 960" overflow="visible">
+    <path d="M480-80q-6,0-11-4t-7-10q-17-67-51-126T328-328T220-411T94-462q-6-2-10-7t-4-11t4-11t10-7q67-17 126-51t108-83t83-108t51-126q2-6 7-10t11-4t10.5,4t6.5,10q18,67 52,126t83,108t108,83t126,51q6,2 10,7t4,11t-4,11t-10,7q-67,17-126,51T632-328T549-220T498-94q-2,6-7,10t-11,4Z"></path>
+  </svg>
+
+  <script href="https://cdn.jsdelivr.net/npm/gsap@latest/dist/gsap.min.js"></script>
+  
+  <script>
+    <![CDATA[
+      // 等待 GSAP 加载完成喵
+      window.onload = function() {
+        const btn = document.getElementById('myBtn');
+        const rotator = document.getElementById('rotator');
+        const shapePath = document.getElementById('magicShape');
+
+        const Math_PI = Math.PI;
+        const TAU = Math_PI * 2;
+
+        function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+
+        const shapeState = {
+          hexToCircle: 0,
+          clover: 0,
+          scallop: 0,
+          hexCornerRound: 0.82
+        };
+
+        const VIEW = {
+          cx: 50, cy: 50, hexR: 47, circleR: 39,
+          hexFilletMax: 12, cloverK: 0.145, scallopN: 18, scallopK: 0.065, samples: 120
+        };
+
+        const LUT = { samples: 0, scallopN: 0, cos: [], sin: [], cos4: [], cosN: [], x: [], y: [], hx: [], hy: [] };
+
+        function rebuildLUT() {
+          const s = VIEW.samples; LUT.samples = s; LUT.scallopN = VIEW.scallopN;
+          LUT.cos.length = s; LUT.sin.length = s; LUT.cos4.length = s; LUT.cosN.length = s;
+          LUT.x.length = s; LUT.y.length = s; LUT.hx.length = s; LUT.hy.length = s;
+          for (let i = 0; i < s; i++) {
+            const a = (i / s) * TAU;
+            LUT.cos[i] = Math.cos(a); LUT.sin[i] = Math.sin(a);
+            LUT.cos4[i] = Math.cos(4 * a); LUT.cosN[i] = Math.cos(VIEW.scallopN * a);
+          }
+        }
+
+        function ensureLUT() { if (LUT.samples !== VIEW.samples || LUT.scallopN !== VIEW.scallopN) rebuildLUT(); }
+
+        const pathParts = [];
+        function buildClosedPolylinePath(xArr, yArr, n) {
+          if (n < 3) return '';
+          pathParts.length = 0;
+          pathParts.push('M', xArr[0], yArr[0]);
+          for (let i = 1; i < n; i++) pathParts.push('L', xArr[i], yArr[i]);
+          pathParts.push('Z');
+          return pathParts.join(' ');
+        }
+
+        const HEX6 = { vx: new Array(6), vy: new Array(6) };
+        const HEX6_TMP = { Sx: new Array(6), Sy: new Array(6), Ex: new Array(6), Ey: new Array(6), Cx: new Array(6), Cy: new Array(6), A0: new Array(6), DA: new Array(6) };
+
+        function fillRoundedHexPoints(xOut, yOut, n, cornerR) {
+          const cx = VIEW.cx, cy = VIEW.cy, R = VIEW.hexR, side = R;
+          const rMax = side * 0.48, r = Math.max(0, Math.min(rMax, cornerR || 0));
+          const t = r / Math.tan(Math_PI / 3);
+
+          for (let i = 0; i < 6; i++) {
+            const a = (i / 6) * TAU;
+            HEX6.vx[i] = cx + R * Math.cos(a); HEX6.vy[i] = cy + R * Math.sin(a);
+          }
+
+          const { Sx, Sy, Ex, Ey, Cx, Cy, A0, DA } = HEX6_TMP;
+
+          for (let i = 0; i < 6; i++) {
+            const ip = (i - 1 + 6) % 6, inx = (i + 1) % 6;
+            const vx = HEX6.vx[i], vy = HEX6.vy[i], vPrevX = HEX6.vx[ip], vPrevY = HEX6.vy[ip], vNextX = HEX6.vx[inx], vNextY = HEX6.vy[inx];
+            let ePrevX = vPrevX - vx, ePrevY = vPrevY - vy, eNextX = vNextX - vx, eNextY = vNextY - vy;
+            const lPrev = Math.hypot(ePrevX, ePrevY) || 1, lNext = Math.hypot(eNextX, eNextY) || 1;
+            ePrevX /= lPrev; ePrevY /= lPrev; eNextX /= lNext; eNextY /= lNext;
+
+            Sx[i] = vx + ePrevX * t; Sy[i] = vy + ePrevY * t; Ex[i] = vx + eNextX * t; Ey[i] = vy + eNextY * t;
+
+            let bisX = ePrevX + eNextX, bisY = ePrevY + eNextY;
+            const bisL = Math.hypot(bisX, bisY) || 1; bisX /= bisL; bisY /= bisL;
+            const centerDist = (r * 2) / Math.sqrt(3);
+            Cx[i] = vx + bisX * centerDist; Cy[i] = vy + bisY * centerDist;
+
+            if (r > 1e-6) {
+              const a0 = Math.atan2(Sy[i] - Cy[i], Sx[i] - Cx[i]), a1 = Math.atan2(Ey[i] - Cy[i], Ex[i] - Cx[i]);
+              let da = a1 - a0; if (da <= 0) da += TAU; A0[i] = a0; DA[i] = da;
+            } else { A0[i] = 0; DA[i] = 0; }
+          }
+
+          const arcAngle = (2 * Math_PI) / 3, arcLen = r * arcAngle, edgeLen = Math.max(0, side - 2 * t);
+          const unitLen = arcLen + edgeLen, perimeter = unitLen * 6;
+
+          for (let k = 0; k < n; k++) {
+            const dist = (k / n) * perimeter;
+            const i = unitLen > 1e-9 ? Math.min(5, Math.floor(dist / unitLen)) : 0;
+            const local = dist - i * unitLen;
+
+            if (r > 1e-6 && local < arcLen) {
+              const u = arcLen > 1e-9 ? local / arcLen : 0, a = A0[i] + DA[i] * u;
+              xOut[k] = Cx[i] + r * Math.cos(a); yOut[k] = Cy[i] + r * Math.sin(a);
+            } else {
+              const j = (i + 1) % 6, d2 = local - arcLen, u = edgeLen > 1e-9 ? Math.max(0, Math.min(1, d2 / edgeLen)) : 0;
+              xOut[k] = Ex[i] + (Sx[j] - Ex[i]) * u; yOut[k] = Ey[i] + (Sy[j] - Ey[i]) * u;
+            }
+          }
+        }
+
+        function updateMagicShape() {
+          ensureLUT();
+          const tHex = clamp01(shapeState.hexToCircle), tClover = clamp01(shapeState.clover), tScallop = clamp01(shapeState.scallop);
+          const s = LUT.samples, cornerR = VIEW.hexFilletMax * clamp01(shapeState.hexCornerRound);
+          fillRoundedHexPoints(LUT.hx, LUT.hy, s, cornerR);
+          const tCloverEff = tClover * tHex, tScallopEff = tScallop * tHex;
+
+          for (let i = 0; i < s; i++) {
+            const mod = 1 + VIEW.cloverK * tCloverEff * LUT.cos4[i] + VIEW.scallopK * tScallopEff * LUT.cosN[i];
+            const rCircle = VIEW.circleR * mod, xCircle = VIEW.cx + rCircle * LUT.cos[i], yCircle = VIEW.cy + rCircle * LUT.sin[i];
+            const inv = 1 - tHex;
+            LUT.x[i] = LUT.hx[i] * inv + xCircle * tHex; LUT.y[i] = LUT.hy[i] * inv + yCircle * tHex;
+          }
+          shapePath.setAttribute('d', buildClosedPolylinePath(LUT.x, LUT.y, s));
+        }
+
+        const spinTween = gsap.to(rotator, { rotation: 360, duration: 2.4, ease: 'none', repeat: -1, paused: true });
+        let shapeDirty = true;
+        function markShapeDirty() { shapeDirty = true; }
+        gsap.ticker.add(() => { if (!shapeDirty) return; shapeDirty = false; updateMagicShape(); });
+
+        const hoverTl = gsap.timeline({ paused: true, defaults: { ease: 'sine.inOut' } });
+        const cycleTl = gsap.timeline({ repeat: -1, paused: true, defaults: { ease: 'sine.inOut' } });
+
+        cycleTl
+          .set(shapeState, { hexToCircle: 0, clover: 0, scallop: 0, hexCornerRound: 0.82 }).set(shapePath, { fill: '#4285f4' }).call(markShapeDirty)
+          .to({}, { duration: 0.45 })
+          .to(shapeState, { duration: 0.65, hexToCircle: 1, onUpdate: markShapeDirty }).to(shapePath, { duration: 0.65, fill: '#9b72cb' }, '<')
+          .to(shapeState, { duration: 0.55, scallop: 1, onUpdate: markShapeDirty }).to(shapePath, { duration: 0.55, fill: '#b07cff' }, '<')
+          .to({}, { duration: 0.35 })
+          .to(shapeState, { duration: 0.3, scallop: 0, onUpdate: markShapeDirty })
+          .to(shapeState, { duration: 0.7, clover: 1, onUpdate: markShapeDirty }).to(shapePath, { duration: 0.7, fill: '#a483ff' }, '<')
+          .to({}, { duration: 0.35 })
+          .to(shapeState, { duration: 0.8, hexToCircle: 0, clover: 0, scallop: 0, onUpdate: markShapeDirty }).to(shapePath, { duration: 0.8, fill: '#4285f4' }, '<')
+          .set(shapeState, { hexToCircle: 0, clover: 0, scallop: 0 }).set(shapePath, { fill: '#4285f4' }).call(markShapeDirty);
+
+        hoverTl
+          .set(rotator, { scale: 0.72, rotation: 0, transformOrigin: '50% 50%' }).set(shapePath, { fill: '#4285f4' })
+          .set(shapeState, { hexToCircle: 0, clover: 0, scallop: 0, hexCornerRound: 0.82 }).call(markShapeDirty)
+          .to(rotator, { duration: 0.22, scale: 1, ease: 'back.out(2.2)' })
+          .to({}, { duration: 0.38 })
+          .to(shapeState, { duration: 0.65, hexToCircle: 1, onUpdate: markShapeDirty }, '<').to(shapePath, { duration: 0.65, fill: '#9b72cb' }, '<')
+          .to(shapeState, { duration: 0.5, scallop: 1, onUpdate: markShapeDirty }).to(shapePath, { duration: 0.5, fill: '#b07cff' }, '<')
+          .to(shapeState, { duration: 0.2, scallop: 0, onUpdate: markShapeDirty })
+          .to(shapeState, { duration: 0.7, clover: 1, onUpdate: markShapeDirty }).to(shapePath, { duration: 0.7, fill: '#a483ff' }, '<')
+          .to({}, { duration: 0.25 })
+          .to(shapeState, { duration: 0.7, hexToCircle: 0, clover: 0, scallop: 0, onUpdate: markShapeDirty }).to(shapePath, { duration: 0.7, fill: '#4285f4' }, '<')
+          .call(() => { phase = 'cycle'; cycleTl.play(0); });
+
+        gsap.set(rotator, { rotation: 0, transformOrigin: '50% 50%', scale: 1 });
+        gsap.set(shapePath, { fill: '#4285f4' });
+        markShapeDirty();
+
+        let started = false;
+        let phase = 'intro';
+
+        btn.addEventListener('mouseenter', () => {
+          btn.classList.add('is-active');
+          markShapeDirty();
+          if (!started) { started = true; phase = 'intro'; spinTween.play(0); hoverTl.play(0); return; }
+          spinTween.resume();
+          if (phase === 'intro') hoverTl.resume(); else cycleTl.resume();
+        });
+
+        btn.addEventListener('mouseleave', () => {
+          btn.classList.remove('is-active');
+          spinTween.pause(); hoverTl.pause(); cycleTl.pause();
+        });
+      };
+    ]]>
+  </script>
+</svg>
