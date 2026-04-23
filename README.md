@@ -2,8 +2,6 @@
 
 <div align="center">
 
-<img src="./io.svg" width="8%" height="8%" alt="I/O">
-
 # The husk of [IGCyukira](https://github.com/IGCyukira)
 
 > 路很长，梦还在。
